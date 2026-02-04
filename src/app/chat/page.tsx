@@ -33,36 +33,24 @@ function useContextKey(): string | null {
 const rowSchema = z.object({}).passthrough();
 
 const tools = [
+  // Database Tools
   {
     name: 'getDatabaseSchema',
-    description: `Get database schema with tables and columns. Returns structured data for SchemaVisualizer component.
-      Use this when user asks to see database structure, schema, or tables.
-      The response includes 'structured.tables' array with table names, columns, and types.`,
+    description: 'Get database schema with tables and columns',
     tool: async () => {
       const response = await fetch('/api/schema');
       const data = await response.json();
-      return {
-        schema: data.schema,
-        tables: data.structured?.tables || [],
-      };
+      return { schema: data.schema, tables: data.tables };
     },
     inputSchema: z.object({}),
     outputSchema: z.object({ 
       schema: z.string(),
-      tables: z.array(z.object({
-        name: z.string(),
-        columns: z.array(z.object({
-          name: z.string(),
-          type: z.string(),
-          isPrimaryKey: z.boolean().optional(),
-        })),
-        rowCount: z.number().optional(),
-      }))
+      tables: z.array(z.any())
     }),
   },
   {
     name: 'executeSQL',
-    description: 'Execute SQL SELECT query and return results',
+    description: 'Execute SQL SELECT query on local database',
     tool: async (params: { query: string }) => {
       const response = await fetch('/api/query', {
         method: 'POST',
@@ -80,7 +68,7 @@ const tools = [
   },
   {
     name: 'executePython',
-    description: 'Execute Python code to transform data using AI predictions',
+    description: 'Execute Python code to transform data',
     tool: async (params: { code: string; data: any[] }) => {
       const response = await fetch('/api/python', {
         method: 'POST',
@@ -89,16 +77,124 @@ const tools = [
       });
       return response.json();
     },
-    inputSchema: z.object({ 
-      code: z.string(),
-      data: z.array(rowSchema)
-    }),
+    inputSchema: z.object({ code: z.string(), data: z.array(rowSchema) }),
     outputSchema: z.object({
       success: z.boolean(),
       result: z.array(rowSchema).optional(),
       newColumns: z.array(z.string()).optional(),
     }),
-  }
+  },
+  
+  // MCP Integrations (Shells for now)
+  {
+    name: 'connectNeonDatabase',
+    description: 'Connect to external Neon PostgreSQL database using connection string',
+    tool: async (params: { connectionString: string; query: string }) => {
+      const response = await fetch('/api/neon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ 
+      connectionString: z.string().describe('Neon connection string'),
+      query: z.string().describe('SQL query to execute')
+    }),
+    outputSchema: z.object({
+      results: z.array(rowSchema),
+      columns: z.array(z.string()),
+      rowCount: z.number(),
+    }),
+  },
+  {
+    name: 'braveSearch',
+    description: 'Search the web using Brave search engine for research and benchmarking',
+    tool: async (params: { query: string }) => {
+      const response = await fetch('/api/brave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ query: z.string() }),
+    outputSchema: z.object({
+      results: z.array(z.object({
+        title: z.string(),
+        url: z.string(),
+        snippet: z.string()
+      })),
+      query: z.string(),
+    }),
+  },
+  {
+    name: 'githubAction',
+    description: 'Perform GitHub action like view repo, create gist, or create issue',
+    tool: async (params: { action: string; repo: string; data?: any }) => {
+      const response = await fetch('/api/github', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ 
+      action: z.enum(['view', 'create', 'gist']),
+      repo: z.string(),
+      data: z.any().optional()
+    }),
+    outputSchema: z.object({
+      status: z.string(),
+      action: z.string(),
+      repo: z.string(),
+      url: z.string().optional(),
+    }),
+  },
+  {
+    name: 'exportToAirtable',
+    description: 'Export data to Airtable or Google Sheets',
+    tool: async (params: { data: any[]; destination: 'airtable' | 'sheets' }) => {
+      const response = await fetch('/api/airtable', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ 
+      data: z.array(rowSchema),
+      destination: z.enum(['airtable', 'sheets'])
+    }),
+    outputSchema: z.object({
+      status: z.string(),
+      rows: z.number(),
+      destination: z.string(),
+      url: z.string().optional(),
+    }),
+  },
+  {
+    name: 'createNotionPage',
+    description: 'Create a page in Notion with analysis results',
+    tool: async (params: { title: string; content: string; databaseId?: string }) => {
+      const response = await fetch('/api/notion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ 
+      title: z.string(),
+      content: z.string(),
+      databaseId: z.string().optional()
+    }),
+    outputSchema: z.object({
+      status: z.string(),
+      title: z.string(),
+      pageUrl: z.string(),
+    }),
+  },
 ];
 
 export default function Home() {
