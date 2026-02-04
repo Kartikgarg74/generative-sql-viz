@@ -43,7 +43,7 @@ const tools = [
       return { schema: data.schema, tables: data.tables };
     },
     inputSchema: z.object({}),
-    outputSchema: z.object({ 
+    outputSchema: z.object({
       schema: z.string(),
       tables: z.array(z.any())
     }),
@@ -84,117 +84,96 @@ const tools = [
       newColumns: z.array(z.string()).optional(),
     }),
   },
-  
+
   // MCP Integrations (Shells for now)
-  {
-    name: 'connectNeonDatabase',
-    description: 'Connect to external Neon PostgreSQL database using connection string',
-    tool: async (params: { connectionString: string; query: string }) => {
-      const response = await fetch('/api/neon', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-      return response.json();
-    },
-    inputSchema: z.object({ 
-      connectionString: z.string().describe('Neon connection string'),
-      query: z.string().describe('SQL query to execute')
+    // 1. Neon - Demo mode (working)
+    {
+    name: 'showNeonDemo',
+    description: 'Show interactive Neon database demo with sample data',
+    tool: async () => ({
+        demoMode: true,
+        databaseName: 'demo-production-db',
+        tables: [
+        { name: 'users', rowCount: 4 },
+        { name: 'orders', rowCount: 5 },
+        { name: 'products', rowCount: 4 },
+        ],
     }),
+    inputSchema: z.object({}),
     outputSchema: z.object({
-      results: z.array(rowSchema),
-      columns: z.array(z.string()),
-      rowCount: z.number(),
+        demoMode: z.literal(true),
+        databaseName: z.string(),
+        tables: z.array(z.object({ name: z.string(), rowCount: z.number() })),
     }),
-  },
-  {
-    name: 'braveSearch',
-    description: 'Search the web using Brave search engine for research and benchmarking',
-    tool: async (params: { query: string }) => {
-      const response = await fetch('/api/brave', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-      return response.json();
     },
+
+    // 2. Brave Search - Mock for now
+    {
+    name: 'braveSearch',
+    description: 'Search the web for information and benchmarks',
+    tool: async (params: { query: string }) => ({
+        query: params.query,
+        results: [
+        { title: `Results for "${params.query}"`, url: '#', snippet: 'Search integration pending - this is a demo result' }
+        ],
+    }),
     inputSchema: z.object({ query: z.string() }),
     outputSchema: z.object({
-      results: z.array(z.object({
-        title: z.string(),
-        url: z.string(),
-        snippet: z.string()
-      })),
-      query: z.string(),
+        query: z.string(),
+        results: z.array(z.object({ title: z.string(), url: z.string(), snippet: z.string() })),
     }),
-  },
-  {
-    name: 'githubAction',
-    description: 'Perform GitHub action like view repo, create gist, or create issue',
-    tool: async (params: { action: string; repo: string; data?: any }) => {
-      const response = await fetch('/api/github', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-      return response.json();
     },
-    inputSchema: z.object({ 
-      action: z.enum(['view', 'create', 'gist']),
-      repo: z.string(),
-      data: z.any().optional()
+
+    // 3. GitHub - Mock for now
+    {
+    name: 'githubConnect',
+    description: 'Connect to GitHub account',
+    tool: async () => ({
+        service: 'github',
+        status: 'connected',
+        accountName: 'demo-user',
     }),
+    inputSchema: z.object({}),
     outputSchema: z.object({
-      status: z.string(),
-      action: z.string(),
-      repo: z.string(),
-      url: z.string().optional(),
+        service: z.literal('github'),
+        status: z.enum(['connected', 'error']),
+        accountName: z.string().optional(),
     }),
-  },
-  {
-    name: 'exportToAirtable',
-    description: 'Export data to Airtable or Google Sheets',
-    tool: async (params: { data: any[]; destination: 'airtable' | 'sheets' }) => {
-      const response = await fetch('/api/airtable', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-      return response.json();
     },
-    inputSchema: z.object({ 
-      data: z.array(rowSchema),
-      destination: z.enum(['airtable', 'sheets'])
+
+    // 4. Airtable - Mock for now
+    {
+    name: 'airtableConnect',
+    description: 'Connect to Airtable',
+    tool: async () => ({
+        service: 'airtable',
+        status: 'connected',
+        accountName: 'Demo Workspace',
     }),
+    inputSchema: z.object({}),
     outputSchema: z.object({
-      status: z.string(),
-      rows: z.number(),
-      destination: z.string(),
-      url: z.string().optional(),
+        service: z.literal('airtable'),
+        status: z.enum(['connected', 'error']),
+        accountName: z.string().optional(),
     }),
-  },
-  {
-    name: 'createNotionPage',
-    description: 'Create a page in Notion with analysis results',
-    tool: async (params: { title: string; content: string; databaseId?: string }) => {
-      const response = await fetch('/api/notion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-      });
-      return response.json();
     },
-    inputSchema: z.object({ 
-      title: z.string(),
-      content: z.string(),
-      databaseId: z.string().optional()
+
+    // 5. Notion - Mock for now
+    {
+    name: 'notionConnect',
+    description: 'Connect to Notion workspace',
+    tool: async () => ({
+        service: 'notion',
+        status: 'connected',
+        accountName: 'Demo Workspace',
     }),
+    inputSchema: z.object({}),
     outputSchema: z.object({
-      status: z.string(),
-      title: z.string(),
-      pageUrl: z.string(),
+        service: z.literal('notion'),
+        status: z.enum(['connected', 'error']),
+        accountName: z.string().optional(),
     }),
-  },
+    },
 ];
 
 export default function Home() {
