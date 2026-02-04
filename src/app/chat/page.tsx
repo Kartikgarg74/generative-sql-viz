@@ -30,23 +30,39 @@ function useContextKey(): string | null {
   return useSyncExternalStore(subscribe, getContextKey, () => null);
 }
 
-// Define tools inline
 const rowSchema = z.object({}).passthrough();
 
 const tools = [
   {
     name: 'getDatabaseSchema',
-    description: 'Call this FIRST before any database query. Returns all table names and column names/types in the database.',
+    description: `Get database schema with tables and columns. Returns structured data for SchemaVisualizer component.
+      Use this when user asks to see database structure, schema, or tables.
+      The response includes 'structured.tables' array with table names, columns, and types.`,
     tool: async () => {
       const response = await fetch('/api/schema');
-      return response.json();
+      const data = await response.json();
+      return {
+        schema: data.schema,
+        tables: data.structured?.tables || [],
+      };
     },
     inputSchema: z.object({}),
-    outputSchema: z.object({ schema: z.string() }),
+    outputSchema: z.object({ 
+      schema: z.string(),
+      tables: z.array(z.object({
+        name: z.string(),
+        columns: z.array(z.object({
+          name: z.string(),
+          type: z.string(),
+          isPrimaryKey: z.boolean().optional(),
+        })),
+        rowCount: z.number().optional(),
+      }))
+    }),
   },
   {
     name: 'executeSQL',
-    description: 'Execute SQL SELECT query and return results. Use this to get data before Python transformation.',
+    description: 'Execute SQL SELECT query and return results',
     tool: async (params: { query: string }) => {
       const response = await fetch('/api/query', {
         method: 'POST',
@@ -64,9 +80,7 @@ const tools = [
   },
   {
     name: 'executePython',
-    description: `Execute Python code to transform data. Use AFTER getting SQL results. 
-      Common operations: predict/forecast trends, calculate new columns, aggregate data, filter/sort.
-      The code will be executed on the data and return transformed results.`,
+    description: 'Execute Python code to transform data using AI predictions',
     tool: async (params: { code: string; data: any[] }) => {
       const response = await fetch('/api/python', {
         method: 'POST',
@@ -76,15 +90,13 @@ const tools = [
       return response.json();
     },
     inputSchema: z.object({ 
-      code: z.string().describe('Python code to execute'),
-      data: z.array(rowSchema).describe('Input data from SQL query')
+      code: z.string(),
+      data: z.array(rowSchema)
     }),
     outputSchema: z.object({
       success: z.boolean(),
       result: z.array(rowSchema).optional(),
       newColumns: z.array(z.string()).optional(),
-      rowsProcessed: z.number(),
-      rowsReturned: z.number(),
     }),
   }
 ];

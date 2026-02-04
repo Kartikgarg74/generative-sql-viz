@@ -51,3 +51,13 @@ export function getDatabaseSchema(): string {
   db.close();
   return schema;
 }
+
+export function getRowCounts(tableName: string): number {
+  const db = new Database(DB_PATH);
+  try {
+    const result = db.prepare(`SELECT COUNT(*) as count FROM ${tableName}`).get() as { count: number };
+    return result?.count || 0;
+  } finally {
+    db.close();
+  }
+}
