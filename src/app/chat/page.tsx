@@ -46,7 +46,7 @@ const tools = [
   },
   {
     name: 'executeSQL',
-    description: 'Execute a SQL SELECT query after checking schema. Returns data rows and column names.',
+    description: 'Execute SQL SELECT query and return results. Use this to get data before Python transformation.',
     tool: async (params: { query: string }) => {
       const response = await fetch('/api/query', {
         method: 'POST',
@@ -60,6 +60,31 @@ const tools = [
       results: z.array(rowSchema),
       columns: z.array(z.string()),
       rowCount: z.number(),
+    }),
+  },
+  {
+    name: 'executePython',
+    description: `Execute Python code to transform data. Use AFTER getting SQL results. 
+      Common operations: predict/forecast trends, calculate new columns, aggregate data, filter/sort.
+      The code will be executed on the data and return transformed results.`,
+    tool: async (params: { code: string; data: any[] }) => {
+      const response = await fetch('/api/python', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      return response.json();
+    },
+    inputSchema: z.object({ 
+      code: z.string().describe('Python code to execute'),
+      data: z.array(rowSchema).describe('Input data from SQL query')
+    }),
+    outputSchema: z.object({
+      success: z.boolean(),
+      result: z.array(rowSchema).optional(),
+      newColumns: z.array(z.string()).optional(),
+      rowsProcessed: z.number(),
+      rowsReturned: z.number(),
     }),
   }
 ];

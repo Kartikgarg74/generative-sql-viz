@@ -2,18 +2,32 @@
 
 import { z } from 'zod';
 import { useState } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export const pythonTransformSchema = z.object({
   code: z.string().describe('Python code that was executed'),
   explanation: z.string().describe('What this code does in plain English'),
   inputRows: z.number().describe('Number of input rows'),
   outputRows: z.number().describe('Number of output rows after transformation'),
+  newColumns: z.array(z.string()).optional().describe('New columns added by transformation'),
 });
 
-export function PythonTransform({ code, explanation, inputRows, outputRows }: any) {
+export function PythonTransform({ code, explanation, inputRows, outputRows, newColumns }: any) {
   const [showCode, setShowCode] = useState(false);
+
+  // Simple syntax highlighting mock
+  const highlightedCode = code
+    .split('\n')
+    .map((line: string, i: number) => {
+      const trimmed = line.trim();
+      let color = 'text-slate-300';
+      if (trimmed.startsWith('#')) color = 'text-gray-500';
+      else if (trimmed.startsWith('import') || trimmed.startsWith('from')) color = 'text-pink-400';
+      else if (trimmed.startsWith('def') || trimmed.startsWith('class')) color = 'text-blue-400';
+      else if (trimmed.startsWith('return') || trimmed.startsWith('yield')) color = 'text-purple-400';
+      else if (trimmed.includes('=') && !trimmed.startsWith('=')) color = 'text-green-400';
+      return `<span class="${color}">${line}</span>`;
+    })
+    .join('\n');
 
   return (
     <div className="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm border border-slate-700">
@@ -32,15 +46,20 @@ export function PythonTransform({ code, explanation, inputRows, outputRows }: an
       
       <p className="text-slate-300 mb-3 text-sm leading-relaxed">{explanation}</p>
       
+      {newColumns && newColumns.length > 0 && (
+        <div className="mb-3 text-xs">
+          <span className="text-yellow-400">New columns added:</span>{' '}
+          {newColumns.map((col: string) => (
+            <span key={col} className="bg-yellow-900 text-yellow-200 px-2 py-0.5 rounded mr-1">
+              {col}
+            </span>
+          ))}
+        </div>
+      )}
+      
       {showCode && (
-        <div className="mb-3 rounded overflow-hidden">
-          <SyntaxHighlighter 
-            language="python" 
-            style={vscDarkPlus}
-            customStyle={{ margin: 0, fontSize: '12px' }}
-          >
-            {code}
-          </SyntaxHighlighter>
+        <div className="mb-3 p-3 bg-slate-800 rounded overflow-x-auto text-xs leading-relaxed">
+          <pre dangerouslySetInnerHTML={{ __html: highlightedCode }} />
         </div>
       )}
       
