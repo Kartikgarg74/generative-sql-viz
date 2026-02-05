@@ -27,7 +27,6 @@ import {
   type TamboElicitationResponse,
 } from "@tambo-ai/react/mcp";
 import { cva, type VariantProps } from "class-variance-authority";
-import Image from "next/image";
 import {
   ArrowUp,
   AtSign,
