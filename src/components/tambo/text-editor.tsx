@@ -112,7 +112,7 @@ export interface PromptItem extends SuggestionItem {
 export interface TextEditorProps {
   value: string;
   onChange: (text: string) => void;
-  onResourceNamesChange: (
+  onResourceNamesChange?: (
     resourceNames:
       | Record<string, string>
       | ((prev: Record<string, string>) => Record<string, string>),

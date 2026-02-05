@@ -9,7 +9,7 @@ export const exportPanelSchema = z.object({
   formats: z.array(z.enum(['csv', 'json'])).optional().describe('Available export formats - defaults to both'),
 });
 
-export function ExportPanel({ data, filename, formats }: any) {
+export function ExportPanel({ data, filename, formats }: z.infer<typeof exportPanelSchema>) {
   const [exported, setExported] = useState(false);
   
   // Default to both formats if not specified
@@ -19,7 +19,7 @@ export function ExportPanel({ data, filename, formats }: any) {
     if (data.length === 0) return;
     
     const headers = Object.keys(data[0]).join(',');
-    const rows = data.map((row: any) => 
+    const rows = data.map((row: z.infer<typeof exportPanelSchema>['data'][number]) => 
       Object.values(row).map(val => 
         typeof val === 'string' && val.includes(',') ? `"${val}"` : val
       ).join(',')

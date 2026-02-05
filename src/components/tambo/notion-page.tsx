@@ -9,7 +9,9 @@ export const notionPageSchema = z.object({
   blocks: z.number().optional(),
 });
 
-export function NotionPage({ title, pageUrl, status, blocks }: any) {
+type NotionPageProps = z.infer<typeof notionPageSchema>;
+
+export function NotionPage({ title, pageUrl, status, blocks }: NotionPageProps) {
   return (
     <div className="bg-white p-4 rounded-lg shadow border">
       <div className="flex items-center gap-2 mb-2">

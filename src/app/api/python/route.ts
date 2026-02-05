@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 
+type Row = Record<string, any>;
+
 interface PythonResult {
-  data: any[];
+  data: Row[];
   newColumns: string[];
 }
 
@@ -30,7 +32,7 @@ export async function POST(request: Request) {
   }
 }
 
-function executePythonMock(code: string, data: any[]): PythonResult {
+function executePythonMock(code: string, data: Row[]): PythonResult {
   const newColumns: string[] = [];
   let transformedData = [...(data || [])];
 
@@ -84,15 +86,24 @@ function executePythonMock(code: string, data: any[]): PythonResult {
   return { data: transformedData, newColumns };
 }
 
-function calculateTrend(data: any[], index: number): number {
+function calculateTrend(data: Row[], index: number): number {
   const base = data[index]?.amount || data[index]?.total_sales || 100;
   const trend = index * 10;
   const noise = Math.random() * 20 - 10;
   return Math.round((base + trend + noise) * 100) / 100;
 }
 
-function aggregateData(data: any[]): Record<string, any> {
-  const grouped: Record<string, any> = {};
+interface AggregatedData {
+  group: string;
+  count: number;
+  total: number;
+  avg: number;
+  max: number;
+  min: number;
+}
+
+function aggregateData(data: Row[]): Record<string, AggregatedData> {
+  const grouped: Record<string, AggregatedData> = {};
 
   data.forEach(row => {
     const key = row.category || row.region || 'Unknown';

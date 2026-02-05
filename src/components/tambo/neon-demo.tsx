@@ -14,7 +14,7 @@ export const neonDemoSchema = z.object({
 });
 
 // Sample data
-const DEMO_DATA: Record<string, any[]> = {
+const DEMO_DATA: Record<string, Record<string, string | number>[]> = {
   users: [
     { id: 1, name: 'Alice Johnson', email: 'alice@company.com', role: 'admin', created_at: '2024-01-15' },
     { id: 2, name: 'Bob Smith', email: 'bob@company.com', role: 'user', created_at: '2024-02-20' },
@@ -31,7 +31,9 @@ const DEMO_DATA: Record<string, any[]> = {
   ],
 };
 
-export function NeonDemo({ databaseName, tables, selectedTable }: any) {
+type NeonDemoProps = z.infer<typeof neonDemoSchema>;
+
+export function NeonDemo({ databaseName, selectedTable }: NeonDemoProps) {
   const [activeTable, setActiveTable] = useState(selectedTable || 'users');
   const data = DEMO_DATA[activeTable] || [];
   const columns = data.length > 0 ? Object.keys(data[0]) : [];
@@ -80,7 +82,7 @@ export function NeonDemo({ databaseName, tables, selectedTable }: any) {
             </tr>
           </thead>
           <tbody>
-            {data.map((row: any, idx: number) => (
+            {data.map((row, idx: number) => (
               <tr key={idx} className="border-b hover:bg-slate-50">
                 {columns.map((col: string) => (
                   <td key={col} className="px-3 py-2 text-slate-600">

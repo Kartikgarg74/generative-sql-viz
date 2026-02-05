@@ -3,8 +3,7 @@
 import { z } from 'zod';
 import { useState } from 'react';
 
-// Use passthrough instead of record for dynamic data
-const rowDataSchema = z.object({}).passthrough();
+
 
 export const neonStatusSchema = z.object({
   connected: z.boolean(),
@@ -15,8 +14,9 @@ export const neonStatusSchema = z.object({
   columns: z.array(z.string()).optional(),
 });
 
-export function NeonStatus({ connected, database, tables, error, rowCount, columns }: any) {
-  const [showDetails, setShowDetails] = useState(true);
+type NeonStatusProps = z.infer<typeof neonStatusSchema>;
+
+export function NeonStatus({ connected, database, tables, error, rowCount, columns }: NeonStatusProps) {
 
   if (error) {
     return (

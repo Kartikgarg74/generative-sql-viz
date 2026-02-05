@@ -11,14 +11,14 @@ export const braveResultsSchema = z.object({
   })),
 });
 
-export function BraveResults({ query, results }: any) {
+export function BraveResults({ query, results }: z.infer<typeof braveResultsSchema>) {
   return (
     <div className="bg-white p-4 rounded-lg shadow border">
       <h4 className="font-semibold mb-2 flex items-center gap-2">
-        🔍 Web Search: "{query}"
+        🔍 Web Search: &quot;{query}&quot;
       </h4>
       <div className="space-y-2">
-        {results?.map((r: any, idx: number) => (
+        {results?.map((r: z.infer<typeof braveResultsSchema>['results'][number], idx: number) => (
           <div key={idx} className="p-2 bg-slate-50 rounded text-sm">
             <a href={r.url} target="_blank" className="text-blue-600 hover:underline font-medium">
               {r.title}

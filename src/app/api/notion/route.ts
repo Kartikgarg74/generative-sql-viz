@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { title, content, databaseId } = await request.json();
+    const { title } = await request.json();
     
     // TODO: Implement Notion API
     return NextResponse.json({

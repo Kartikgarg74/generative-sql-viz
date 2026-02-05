@@ -17,7 +17,7 @@ const SERVICE_CONFIG = {
   notion: { icon: '📝', name: 'Notion', color: 'gray' },
 };
 
-export function ConnectCard({ service, status, accountName, message }: any) {
+export function ConnectCard({ service, status, accountName, message }: z.infer<typeof connectCardSchema>) {
   const config = SERVICE_CONFIG[service as keyof typeof SERVICE_CONFIG];
   
   const colors: Record<string, string> = {

@@ -10,7 +10,9 @@ export const neonConnectSchema = z.object({
   message: z.string().optional(),
 });
 
-export function NeonConnect({ status, databaseName, tables, message }: any) {
+type NeonConnectProps = z.infer<typeof neonConnectSchema>;
+
+export function NeonConnect({ status, databaseName, tables, message }: NeonConnectProps) {
   const [isConnecting, setIsConnecting] = useState(false);
 
   const handleConnect = () => {

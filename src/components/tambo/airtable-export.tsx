@@ -9,7 +9,7 @@ export const airtableExportSchema = z.object({
   url: z.string().optional(),
 });
 
-export function AirtableExport({ rows, destination, status, url }: any) {
+export function AirtableExport({ rows, destination, status, url }: z.infer<typeof airtableExportSchema>) {
   return (
     <div className="bg-white p-4 rounded-lg shadow border">
       <div className="flex items-center gap-2 mb-2">

@@ -10,7 +10,7 @@ export const githubActionSchema = z.object({
   description: z.string().optional(),
 });
 
-export function GitHubAction({ action, repo, status, url, description }: any) {
+export function GitHubAction({ action, repo, status, url, description }: z.infer<typeof githubActionSchema>) {
   return (
     <div className="bg-slate-900 text-white p-4 rounded-lg font-mono text-sm">
       <div className="flex items-center gap-2 mb-2">

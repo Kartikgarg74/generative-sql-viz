@@ -17,6 +17,7 @@ import {
   useTamboThreadInput,
   type StagedImage,
 } from "@tambo-ai/react";
+import Image from "next/image";
 import {
   useTamboElicitationContext,
   useTamboMcpPrompt,
@@ -26,6 +27,7 @@ import {
   type TamboElicitationResponse,
 } from "@tambo-ai/react/mcp";
 import { cva, type VariantProps } from "class-variance-authority";
+import Image from "next/image";
 import {
   ArrowUp,
   AtSign,
@@ -45,8 +47,6 @@ import {
   type TamboEditor,
 } from "./text-editor";
 
-// Lazy load DictationButton for code splitting (framework-agnostic alternative to next/dynamic)
-// eslint-disable-next-line @typescript-eslint/promise-function-async
 const LazyDictationButton = React.lazy(() => import("./dictation-button"));
 
 /**
@@ -781,17 +781,7 @@ const MessageInputTextarea = ({
   const { isIdle } = useTamboThread();
   const { addImage, images } = useTamboThreadInput();
   const isUpdatingToken = useIsTamboTokenUpdating();
-  // Resource names are extracted from editor at submit time, no need to track in state
-  const setResourceNames = React.useCallback(
-    (
-      _resourceNames:
-        | Record<string, string>
-        | ((prev: Record<string, string>) => Record<string, string>),
-    ) => {
-      // No-op - we extract resource names directly from editor at submit time
-    },
-    [],
-  );
+
 
   // Track search state for resources (controlled by TextEditor)
   const [resourceSearch, setResourceSearch] = React.useState("");
@@ -881,7 +871,6 @@ const MessageInputTextarea = ({
         ref={editorRef}
         value={value}
         onChange={setValue}
-        onResourceNamesChange={setResourceNames}
         onSubmit={handleSubmit}
         onAddImage={handleAddImage}
         placeholder={placeholder}
@@ -1418,12 +1407,12 @@ const ImageContextBadge: React.FC<ImageContextBadgeProps> = ({
           )}
         >
           <div className="relative w-full h-full">
-            <img
+            <Image
               src={image.dataUrl}
               alt={displayName}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover"
+              layout="fill"
+              objectFit="cover"
+              className="absolute inset-0 w-full h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-1 left-2 right-2 text-white text-xs font-medium truncate">

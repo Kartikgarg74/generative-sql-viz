@@ -32,6 +32,19 @@ function useContextKey(): string | null {
 
 const rowSchema = z.object({}).passthrough();
 
+const columnSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  isPrimaryKey: z.boolean(),
+  isForeignKey: z.boolean(),
+});
+
+const tableSchema = z.object({
+  name: z.string(),
+  columns: z.array(columnSchema),
+  rowCount: z.number(),
+});
+
 const tools = [
   // Database Tools
   {
@@ -45,7 +58,7 @@ const tools = [
     inputSchema: z.object({}),
     outputSchema: z.object({
       schema: z.string(),
-      tables: z.array(z.any())
+      tables: z.array(tableSchema)
     }),
   },
   {
@@ -69,7 +82,7 @@ const tools = [
   {
     name: 'executePython',
     description: 'Execute Python code to transform data',
-    tool: async (params: { code: string; data: any[] }) => {
+    tool: async (params: { code: string; data: z.infer<typeof rowSchema>[] }) => {
       const response = await fetch('/api/python', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -18,11 +18,22 @@ export async function GET() {
   }
 }
 
-function parseSchema(schemaText: string): any[] {
-  const tables: any[] = [];
-  const lines = schemaText.split('\n');
-  
-  let currentTable: any = null;
+interface Column {
+  name: string;
+  type: string;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+}
+
+interface Table {
+  name: string;
+  columns: Column[];
+  rowCount: number;
+}
+
+function parseSchema(schemaText: string): Table[] {
+  const tables: Table[] = [];
+  let currentTable: Table | null = null;
   
   for (const line of lines) {
     const trimmed = line.trim();
@@ -57,9 +68,8 @@ function parseSchema(schemaText: string): any[] {
   
   // Get row counts
   for (const table of tables) {
-    try {
-      table.rowCount = getRowCounts(table.name);
-    } catch (e) {
+    } catch {
+      // Could not get row counts, default to 0
       table.rowCount = 0;
     }
   }

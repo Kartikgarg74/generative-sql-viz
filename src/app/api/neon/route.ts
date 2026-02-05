@@ -100,7 +100,9 @@ export async function POST(request: Request) {
     
     // Clean up connection
     if (client) {
-      try { await client.end(); } catch (e) {}
+      try { await client.end(); } catch {
+        // Ignore errors on cleanup
+      }
     }
     
     const errorMessage = error instanceof Error ? error.message : 'Database connection failed';

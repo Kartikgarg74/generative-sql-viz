@@ -15,7 +15,9 @@ export const schemaVisualizerSchema = z.object({
   })).describe('Database tables with their columns'),
 });
 
-export function SchemaVisualizer({ tables }: { tables?: any[] }) {
+type SchemaVisualizerProps = z.infer<typeof schemaVisualizerSchema>;
+
+export function SchemaVisualizer({ tables }: SchemaVisualizerProps) {
   if (!tables || !Array.isArray(tables) || tables.length === 0) {
     return (
       <div className="bg-white p-6 rounded-lg shadow border">
@@ -47,7 +49,7 @@ export function SchemaVisualizer({ tables }: { tables?: any[] }) {
             
             {/* Columns */}
             <div className="divide-y">
-              {table.columns?.map((col: any, colIndex: number) => (
+              {table.columns?.map((col, colIndex: number) => (
                 <div 
                   key={`col-${table.name}-${col.name}-${colIndex}`} 
                   className="px-4 py-2 flex justify-between items-center hover:bg-slate-50"

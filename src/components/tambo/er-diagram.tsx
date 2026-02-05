@@ -23,7 +23,7 @@ export const erDiagramSchema = z.object({
   })).optional().describe('Relationships between tables'),
 });
 
-export function ERDiagram({ tables, relationships }: any) {
+export function ERDiagram({ tables, relationships }: z.infer<typeof erDiagramSchema>) {
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   
   if (!tables || tables.length === 0) {
@@ -41,7 +41,7 @@ export function ERDiagram({ tables, relationships }: any) {
   // Get relationships for a table
   const getTableRelations = (tableName: string) => {
     return relationships?.filter(
-      (r: any) => r.from === tableName || r.to === tableName
+      (r: NonNullable<z.infer<typeof erDiagramSchema>['relationships']>[number]) => r.from === tableName || r.to === tableName
     ) || [];
   };
 
@@ -68,7 +68,7 @@ export function ERDiagram({ tables, relationships }: any) {
           style={{ zIndex: 0 }}
         >
           {/* Draw relationship lines */}
-          {relationships?.map((rel: any, idx: number) => {
+          {relationships?.map((rel: NonNullable<z.infer<typeof erDiagramSchema>['relationships']>[number], idx: number) => {
             const fromPos = positions[rel.from];
             const toPos = positions[rel.to];
             if (!fromPos || !toPos) return null;
@@ -101,7 +101,7 @@ export function ERDiagram({ tables, relationships }: any) {
 
         {/* Table Boxes */}
         <div className="relative" style={{ zIndex: 1 }}>
-          {tables.map((table: any, idx: number) => {
+          {tables.map((table: z.infer<typeof erDiagramSchema>['tables'][number], idx: number) => {
             const pos = positions[table.name] || { x: 0, y: 0 };
             const isSelected = selectedTable === table.name;
             const tableRels = getTableRelations(table.name);
@@ -136,7 +136,7 @@ export function ERDiagram({ tables, relationships }: any) {
                 
                 {/* Columns */}
                 <div className="p-2 space-y-1">
-                  {table.columns?.slice(0, 5).map((col: any, cidx: number) => (
+                  {table.columns?.slice(0, 5).map((col: z.infer<typeof erDiagramSchema>['tables'][number]['columns'][number], cidx: number) => (
                     <div 
                       key={`er-col-${col.name}-${cidx}`}
                       className="flex items-center gap-2 text-xs"
@@ -195,7 +195,7 @@ export function ERDiagram({ tables, relationships }: any) {
             {selectedTable} Details
           </h4>
           <div className="text-xs text-blue-800">
-            {getTableRelations(selectedTable).map((rel: any, idx: number) => (
+            {getTableRelations(selectedTable).map((rel: NonNullable<z.infer<typeof erDiagramSchema>['relationships']>[number], idx: number) => (
               <div key={idx} className="mb-1">
                 {rel.from === selectedTable ? '→' : '←'} {rel.to === selectedTable ? rel.from : rel.to}
                 {' '}
@@ -210,7 +210,7 @@ export function ERDiagram({ tables, relationships }: any) {
 }
 
 // Simple layout algorithm - arrange tables in a grid
-function calculatePositions(tables: any[]): Record<string, { x: number; y: number }> {
+function calculatePositions(tables: z.infer<typeof erDiagramSchema>['tables']): Record<string, { x: number; y: number }> {
   const positions: Record<string, { x: number; y: number }> = {};
   const cols = 3;
   const spacingX = 240;

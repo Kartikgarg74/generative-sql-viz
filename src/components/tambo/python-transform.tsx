@@ -11,13 +11,15 @@ export const pythonTransformSchema = z.object({
   newColumns: z.array(z.string()).optional().describe('New columns added by transformation'),
 });
 
-export function PythonTransform({ code, explanation, inputRows, outputRows, newColumns }: any) {
+type PythonTransformProps = z.infer<typeof pythonTransformSchema>;
+
+export function PythonTransform({ code, explanation, inputRows, outputRows, newColumns }: PythonTransformProps) {
   const [showCode, setShowCode] = useState(false);
 
   // Simple syntax highlighting mock
   const highlightedCode = code
     .split('\n')
-    .map((line: string, i: number) => {
+    .map((line: string) => {
       const trimmed = line.trim();
       let color = 'text-slate-300';
       if (trimmed.startsWith('#')) color = 'text-gray-500';

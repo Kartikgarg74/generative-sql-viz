@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { action, repo, data } = await request.json();
+    const { action, repo } = await request.json();
     
     // TODO: Implement GitHub API
     return NextResponse.json({
