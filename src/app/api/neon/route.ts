@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@neondatabase/serverless';
 
+interface TableRow {
+  table_name: string;
+}
+
+interface QueryField {
+  name: string;
+}
+
 export async function POST(request: Request) {
   let client: Client | null = null;
   
@@ -54,7 +62,7 @@ export async function POST(request: Request) {
         success: true,
         connected: true,
         database: 'neon',
-        tables: result.rows.map((r: any) => r.table_name),
+        tables: result.rows.map((r: TableRow) => r.table_name),
         rowCount: result.rowCount,
       });
       
@@ -82,12 +90,12 @@ export async function POST(request: Request) {
         connected: true,
         database: 'neon',
         results: result.rows,
-        columns: result.fields.map((f: any) => f.name),
+        columns: result.fields.map((f: QueryField) => f.name),
         rowCount: result.rowCount,
       });
     }
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Neon error:', error);
     
     // Clean up connection
@@ -95,11 +103,13 @@ export async function POST(request: Request) {
       try { await client.end(); } catch (e) {}
     }
     
+    const errorMessage = error instanceof Error ? error.message : 'Database connection failed';
+    
     return NextResponse.json(
       { 
         success: false,
         connected: false,
-        error: error.message || 'Database connection failed'
+        error: errorMessage
       }, 
       { status: 500 }
     );

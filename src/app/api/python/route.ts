@@ -20,11 +20,12 @@ export async function POST(request: Request) {
       rowsReturned: result.data.length
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Python execution error:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json({
       success: false,
-      error: error.message || String(error)
+      error: errorMessage
     }, { status: 500 });
   }
 }
