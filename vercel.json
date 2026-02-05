@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm ci --no-optional && npm run build",
+  "env": {
+    "npm_config_build_from_source": "false"
+  }
+}
