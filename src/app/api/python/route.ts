@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-type Row = Record<string, any>;
+type Row = Record<string, string | number>;
 
 interface PythonResult {
   data: Row[];

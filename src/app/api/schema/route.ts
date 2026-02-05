@@ -34,6 +34,7 @@ interface Table {
 function parseSchema(schemaText: string): Table[] {
   const tables: Table[] = [];
   let currentTable: Table | null = null;
+  const lines = schemaText.split('\n');
   
   for (const line of lines) {
     const trimmed = line.trim();
@@ -68,6 +69,9 @@ function parseSchema(schemaText: string): Table[] {
   
   // Get row counts
   for (const table of tables) {
+    try {
+      const rowCounts = getRowCounts();
+      table.rowCount = rowCounts[table.name] || 0;
     } catch {
       // Could not get row counts, default to 0
       table.rowCount = 0;

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 // These will be actual server actions
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 'use server';
 
 import { executeQuery, getDatabaseSchema } from '@/db/connection';
