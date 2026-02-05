@@ -12,7 +12,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.9.0",
     "@standard-community/standard-json": "^0.1.0",
-    "@tambo-ai/react": "^0.1.0",
+    "@tambo-ai/react": "^0.69.1",
     "better-sqlite3": "^9.0.0",
     "next": "15.1.6",
     "react": "18.3.1",
