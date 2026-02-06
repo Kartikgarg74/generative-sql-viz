@@ -23,13 +23,13 @@
     "@standard-schema/spec": "^1.1.0",
     "@tambo-ai/react": "^0.69.1",
     "@tiptap/core": "^2.9.1",
-    "@tiptap/pm": "^2.9.1",
     "@tiptap/extension-document": "^2.9.1",
     "@tiptap/extension-hard-break": "^2.9.1",
     "@tiptap/extension-mention": "^2.9.1",
     "@tiptap/extension-paragraph": "^2.9.1",
     "@tiptap/extension-placeholder": "^2.9.1",
     "@tiptap/extension-text": "^2.9.1",
+    "@tiptap/pm": "^2.9.1",
     "@tiptap/react": "^2.9.1",
     "@tiptap/suggestion": "^2.9.1",
     "better-sqlite3": "^12.6.2",
@@ -55,6 +55,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@rushstack/eslint-patch": "^1.15.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/better-sqlite3": "^7.6.0",
     "@types/dompurify": "^3.0.5",

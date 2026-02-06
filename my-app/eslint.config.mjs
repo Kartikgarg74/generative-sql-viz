@@ -1,4 +1,4 @@
-import "@rushstack/eslint-patch/modern-module-resolution";
+import "@rushstack/eslint-patch/modern-module-resolution.js";
 import nextConfig from "eslint-config-next";
 import coreWebVitals from "eslint-config-next/core-web-vitals.js";
 import typescript from "eslint-config-next/typescript.js";
