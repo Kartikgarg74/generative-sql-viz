@@ -1,6 +1,3 @@
-
-```bash
-
 # Generative SQL Viz 🚀
 ### The UI Strikes Back - Tambo Hackathon 2025
 
