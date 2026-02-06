@@ -1,141 +1,183 @@
-# Generative UI Analytics Template
 
-This is a generative UI analytics template.
+```bash
 
-Generate graphs with natural language and use natural language to interact with and manage the UI.
+# Generative SQL Viz 🚀
+### The UI Strikes Back - Tambo Hackathon 2025
 
-## Features
+> "May the components be with you"
 
-- Generate graphs inside the chat
-- Drag and drop onto a canvas
-- Edit canvases with natural language in the chat
+[![Hackathon](https://img.shields.io/badge/Tambo-The%20UI%20Strikes%20Back-blue)](https://www.wemakedevs.org/hackathons/tambo)
+[![Generative UI](https://img.shields.io/badge/Generative%20UI-Tambo%20SDK-green)](https://tambo.ai)
 
-## Demo
+**Live Demo:** [generative-sql-viz.vercel.app](https://generative-sql-viz.vercel.app)
 
-<video src="./2025-08-30-tambo-analytics.mp4" controls width="720"></video>
+---
 
-## Get Started
+## 🎯 Mission Briefing
 
-1. Run `gh repo clone tambo-ai/tambo-analytics-template` for a new project
+Transform natural language into intelligent SQL visualizations. Built with **Tambo's Generative UI SDK** - where AI decides which components to render based on user intent.
 
-2. `cd tambo-analytics-template`
+No more static dashboards. No more complex SQL queries. Just ask, and the Force (AI) will show you the data.
 
-3. `npm install`
+---
 
-4. `npx tambo init`
-   - or rename `example.env.local` to `.env.local` and set:
+## ✨ The Force (Features)
 
-     ```env
-     NEXT_PUBLIC_TAMBO_API_KEY=your-api-key
-     ```
+| Feature | What It Does | Tambo Power |
+|:---|:---|:---|
+| 🗣️ **Natural Language → SQL** | Type "Show me sales by region" → AI generates query | `SmartChart` component auto-rendered |
+| 📊 **Auto-Chart Intelligence** | AI picks best viz: bar for categories, line for trends, pie for proportions | Dynamic component selection |
+| 🐍 **Python AI Transformations** | "Predict next quarter" → AI writes & executes Python code | `PythonTransform` component |
+| 🗄️ **Interactive ER Diagrams** | Visual database schema with relationships | `ERDiagram` + `SchemaVisualizer` |
+| 🔌 **Multi-Platform Connect** | Neon, GitHub, Brave, Airtable, Notion integration | `ConnectCard` universal pattern |
+| 📤 **Smart Export** | Download as CSV/JSON with one click | `ExportPanel` component |
+| 🎨 **Generative UI Canvas** | Drag, drop, persist multiple charts | Tambo's interactable system |
 
-5. Run `npm run dev` and go to `localhost:3000` to use the app!
+---
 
-## Roadmap
+## 🚀 Quick Start
 
-- Test with SQL mcp servers
-- Add a Component for executing SQL
-- Add a component for executing Python Transformations
+```bash
+# Clone the repo
+git clone https://github.com/Kartikgarg74/generative-sql-viz.git
 
-## App structure at a glance
+# Install dependencies
+npm install
 
-- **Next.js app**: Pages under `src/app/`.
-  - `src/app/page.tsx`: landing page.
-  - `src/app/chat/page.tsx`: main chat interface.
-
-- **Component registration and chat wiring**: See `src/lib/tambo.ts` and `src/app/chat/page.tsx`.
-
-- **Generatable components (created by chat)**: Components the AI can instantiate in the thread, e.g. `src/components/tambo/graph.tsx`, registered in `src/lib/tambo.ts`.
-
-- **Editable/readable components (stateful UI the chat can modify or inspect)**:
-  - Canvas state in `src/lib/canvas-storage.ts` (Zustand) with canvases and items.
-  - Canvas UI and interactions in `src/components/ui/components-canvas.tsx` and related interactable components like `interactable-tabs.tsx`, `interactable-canvas-details.tsx`.
-  - The chat can update existing components or read current canvas state via the registered tools/hooks that back the chat experience.
-
-For more detailed documentation, visit [Tambo's official docs](https://tambo.co/docs).
-
-## How it works
-
-Register components the AI can render, with schemas for safe props:
-
-```tsx
-// src/lib/tambo.ts (excerpt)
-import { Graph, graphSchema } from "@/components/tambo/graph";
-import { DataCard, dataCardSchema } from "@/components/ui/card-data";
-import type { TamboComponent } from "@tambo-ai/react";
-
-export const components: TamboComponent[] = [
-  {
-    name: "Graph",
-    description: "Render charts (bar/line/pie)",
-    component: Graph,
-    propsSchema: graphSchema,
-  },
-  {
-    name: "DataCards",
-    description: "Selectable list of info",
-    component: DataCard,
-    propsSchema: dataCardSchema,
-  },
-];
+# Run locally
+npm run dev
 ```
 
-Wire the chat and the editable canvas UI:
+Open [http://localhost:3000](http://localhost:3000)
 
-```tsx
-// src/app/chat/page.tsx (excerpt)
-"use client";
-import { TamboProvider } from "@tambo-ai/react";
-import { MessageThreadFull } from "@/components/tambo/message-thread-full";
-import ComponentsCanvas from "@/components/ui/components-canvas";
-import { InteractableTabs } from "@/components/ui/interactable-tabs";
-import { InteractableCanvasDetails } from "@/components/ui/interactable-canvas-details";
-import { components, tools } from "@/lib/tambo";
-import { useMcpServers } from "@/components/tambo/mcp-config-modal";
-import { TamboMcpProvider } from "@tambo-ai/react/mcp";
+---
 
-export default function Chat() {
-  const mcpServers = useMcpServers();
-  return (
-    <TamboProvider
-      apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
-      components={components}
-      tools={tools}
-    >
-      <TamboMcpProvider mcpServers={mcpServers}>
-        <div className="flex h-full">
-          <MessageThreadFull contextKey="tambo-template" />
-          <div className="hidden md:block w-[60%]">
-            <InteractableTabs interactableId="Tabs" />
-            <InteractableCanvasDetails interactableId="CanvasDetails" />
-            <ComponentsCanvas className="h-full" />
-          </div>
-        </div>
-      </TamboMcpProvider>
-    </TamboProvider>
-  );
-}
+## 🎬 Demo Script (For Judges)
+
+Try these commands in the live demo:
+
+### 1️⃣ Natural Language SQL
+> **"Show me sales by category"**
+
+**Result:** AI queries database → Renders bar chart automatically
+
+### 2️⃣ Chart Transformation
+> **"Make it a pie chart"**
+
+**Result:** Component transforms instantly, data preserved
+
+### 3️⃣ AI Python Predictions
+> **"Predict next month's sales using Python"**
+
+**Result:**
+- AI writes linear regression code
+- Executes transformation
+- Shows `PythonTransform` component with code + results
+- Displays prediction chart
+
+### 4️⃣ Schema Visualization
+> **"Show database schema"**
+
+**Result:** Interactive ER diagram with tables, columns, relationships
+
+### 5️⃣ Multi-Platform Demo
+> **"Connect to GitHub"** / **"Search web for benchmarks"**
+
+**Result:** Universal connection cards with OAuth flow
+
+---
+
+## 🛠️ Tech Stack
+
+```
+⚡ Next.js 15 + React 19        → Modern framework
+🎨 Tambo React SDK              → Generative UI engine
+📊 Recharts                     → Data visualization
+🗄️ SQLite + Better-sqlite3      → Local database
+🐘 Neon (demo)                  → External PostgreSQL
+🎯 Zustand                      → State management
+🔒 Zod                          → Schema validation
 ```
 
-## Customizing
+---
 
-### Change what components the AI can control
+## 🏆 Why This Project Wins
 
-You can see how the `Graph` component is registered with tambo in `src/lib/tambo.ts`:
+### ✅ Potential Impact
+- **Problem:** Static BI tools require SQL knowledge
+- **Solution:** Natural language interface for everyone
+- **Use Case:** Business analysts, product managers, non-technical stakeholders
 
-```tsx
-const components: TamboComponent[] = [
-  {
-    name: "Graph",
-    description:
-      "A component that renders various types of charts (bar, line, pie) using Recharts. Supports customizable data visualization with labels, datasets, and styling options.",
-    component: Graph,
-    propsSchema: graphSchema, // zod schema for the component props
-  },
-  // Add more components
-];
+### ✅ Creativity & Originality
+- **Unique:** Python code generation + execution in SQL workflow
+- **Innovative:** Universal connection pattern for all integrations
+- **Fresh:** ER diagrams + Generative UI = visual database exploration
+
+### ✅ Technical Implementation
+- **7 Tambo components** registered with Zod schemas
+- **Custom tools:** SQL execution, Python transformation, web search
+- **Type-safe:** Full TypeScript + Zod validation
+- **Architecture:** Clean separation of concerns
+
+### ✅ Best Use of Tambo
+- **Generative UI:** AI selects between 7+ components based on intent
+- **Interactable:** Canvas persists charts across sessions
+- **Streaming:** Real-time component updates
+- **Tool Integration:** 5 external services connected
+
+### ✅ Aesthetics & UX
+- **Clean:** Minimal, focused interface
+- **Responsive:** Works on all screen sizes
+- **Intuitive:** No learning curve - just type what you want
+- **Polished:** Loading states, error handling, success feedback
+
+---
+
+## 🎥 Live Demo
+
+**URL:** https://generative-sql-viz.vercel.app
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── components/tambo/          # Tambo-registered components
+│   ├── smart-chart.tsx        # Auto-chart selection
+│   ├── python-transform.tsx   # AI code display
+│   ├── er-diagram.tsx         # Visual schema
+│   ├── schema-visualizer.tsx  # Table list view
+│   ├── export-panel.tsx       # CSV/JSON export
+│   ├── neon-demo.tsx          # Database browser
+│   └── connect-card.tsx       # Universal connector
+├── app/api/                   # Backend routes
+│   ├── query/route.ts         # SQL execution
+│   ├── python/route.ts        # Python sandbox
+│   ├── schema/route.ts        # DB introspection
+│   └── neon/route.ts          # Neon connection
+├── lib/
+│   ├── tambo.ts              # Component registry
+│   └── canvas-storage.ts     # Zustand persistence
+└── db/                        # SQLite + sample data
 ```
 
-You can find more information about the options [here](https://tambo.co/docs/concepts/registering-components)
+---
 
-P.S. We use Tambo under the hood to manage chat state, which components the AI can render, and which components the AI can interact with. Tambo is 100% open source — see the repository at [tambo-ai/tambo](https://github.com/tambo-ai/tambo).
+## 🤝 Rebel Alliance (Contributing)
+
+Built for [The UI Strikes Back](https://www.wemakedevs.org/hackathons/tambo) hackathon.
+
+**Built with:** ❤️ + ☕ + [Tambo AI](https://tambo.ai)
+
+---
+
+## 📝 License
+
+MIT - May the Force be with your code.
+
+---
+
+> *"The ability to query data is insignificant next to the power of Generative UI."*
+> — Darth Vader (probably)
+EOF
+```
